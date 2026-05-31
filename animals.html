@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Терра Фауна — Животные</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:    #1a3d2b;
+      --green-mid:#2a5e3f;
+      --orange:   #e8600a;
+      --orange-lt:#f4874b;
+      --white:    #ffffff;
+      --off-white:#f5f2ed;
+      --text:     #1a1a1a;
+      --text-lt:  #5a5a5a;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family:'Open Sans', sans-serif;
+      background: var(--off-white);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top:0; left:0; right:0; z-index:1000;
+      background: var(--green);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 3rem; height:68px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.35);
+    }
+    .nav-logo {
+      font-size:1.4rem; font-weight:800; color:var(--white);
+      letter-spacing:.05em; text-decoration:none;
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .nav-logo span { color:var(--orange); }
+    .nav-links { display:flex; gap:.4rem; list-style:none; }
+    .nav-links a {
+      color:var(--white); text-decoration:none;
+      font-weight:600; font-size:.95rem;
+      padding:.45rem 1.1rem; border-radius:4px;
+      transition:background .18s, color .18s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      background:var(--orange); color:var(--white);
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+      background: var(--green);
+      padding: 7rem 2rem 4rem;
+      text-align:center;
+      color: var(--white);
+      position:relative;
+      overflow:hidden;
+    }
+    .page-header::before {
+      content:'';
+      position:absolute; inset:0;
+      background-image: url('https://images.unsplash.com/photo-1544985361-b420d7a77043?w=1400&q=70');
+      background-size:cover; background-position:center;
+      opacity:.18;
+    }
+    .page-header-content { position:relative; z-index:1; }
+    .page-header .label {
+      font-size:.75rem; font-weight:700; letter-spacing:.15em;
+      text-transform:uppercase; color:var(--orange-lt);
+      display:block; margin-bottom:.6rem;
+    }
+    .page-header h1 {
+      font-size:clamp(2rem,5vw,3.4rem);
+      font-weight:800; line-height:1.15; margin-bottom:.8rem;
+    }
+    .page-header p { font-size:1.05rem; opacity:.75; max-width:540px; margin:0 auto; }
+
+    /* FILTER BAR */
+    .filter-wrap {
+      background: var(--white);
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      position:sticky; top:68px; z-index:900;
+    }
+    .filter-inner {
+      max-width:1200px; margin:0 auto;
+      display:flex; gap:.5rem; flex-wrap:wrap;
+      padding:.9rem 2rem; align-items:center;
+    }
+    .filter-label {
+      font-size:.8rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase; color:var(--text-lt);
+      margin-right:.5rem;
+    }
+    .filter-btn {
+      padding:.45rem 1.2rem; border-radius:4px;
+      border: 2px solid transparent;
+      background: var(--off-white);
+      font-family:'Open Sans', sans-serif;
+      font-size:.88rem; font-weight:700;
+      cursor:pointer; color:var(--text);
+      transition:background .15s, color .15s, border-color .15s, transform .12s;
+    }
+    .filter-btn:hover { border-color: var(--green); transform:translateY(-1px); }
+    .filter-btn.active { background:var(--green); color:var(--white); }
+
+    /* SEARCH */
+    .search-wrap { margin-left:auto; }
+    .search-input {
+      padding:.45rem 1rem; border-radius:4px;
+      border: 2px solid rgba(0,0,0,.1);
+      font-family:'Open Sans', sans-serif; font-size:.9rem;
+      width:200px; transition:border-color .2s, width .25s;
+      background: var(--off-white);
+    }
+    .search-input:focus { outline:none; border-color:var(--orange); width:240px; }
+
+    /* GRID */
+    .animals-main { max-width:1200px; margin:0 auto; padding:3rem 2rem; }
+    .grid-count {
+      font-size:.85rem; color:var(--text-lt);
+      margin-bottom:1.5rem; font-weight:600;
+    }
+    .animals-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+      gap:1.5rem;
+    }
+    .animal-card {
+      background:var(--white);
+      border-radius:8px;
+      overflow:hidden;
+      box-shadow:0 2px 10px rgba(0,0,0,.07);
+      cursor:pointer;
+      transition:transform .22s, box-shadow .22s;
+      position:relative;
+    }
+    .animal-card:hover {
+      transform:translateY(-7px);
+      box-shadow:0 14px 36px rgba(0,0,0,.14);
+    }
+    .animal-card.hidden { display:none; }
+    .card-img {
+      width:100%; height:200px;
+      object-fit:cover; display:block;
+      transition:transform .35s;
+    }
+    .animal-card:hover .card-img { transform:scale(1.07); }
+    .card-img-wrap { overflow:hidden; }
+    .card-body { padding:1.2rem 1.3rem 1.4rem; }
+    .card-tag {
+      display:inline-block;
+      background:var(--orange); color:var(--white);
+      font-size:.68rem; font-weight:800; letter-spacing:.08em;
+      text-transform:uppercase; padding:.22rem .7rem;
+      border-radius:2px; margin-bottom:.55rem;
+    }
+    .card-body h3 { font-size:1.05rem; font-weight:800; color:var(--green); margin-bottom:.35rem; }
+    .card-body p { font-size:.85rem; color:var(--text-lt); line-height:1.55; }
+    .card-arrow {
+      display:inline-flex; align-items:center; gap:.3rem;
+      margin-top:.8rem; font-size:.82rem; font-weight:700;
+      color:var(--orange); transition:gap .15s;
+    }
+    .animal-card:hover .card-arrow { gap:.6rem; }
+
+    .no-results {
+      grid-column:1/-1; text-align:center;
+      padding:4rem 2rem; color:var(--text-lt);
+      font-size:1.1rem;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position:fixed; inset:0; z-index:2000;
+      background:rgba(10,30,20,.72);
+      display:flex; align-items:center; justify-content:center;
+      padding:1.5rem;
+      opacity:0; visibility:hidden;
+      transition:opacity .25s, visibility .25s;
+    }
+    .modal-overlay.open { opacity:1; visibility:visible; }
+    .modal {
+      background:var(--white);
+      border-radius:12px;
+      max-width:760px; width:100%;
+      max-height:90vh; overflow-y:auto;
+      transform:scale(.93) translateY(20px);
+      transition:transform .28s;
+      position:relative;
+    }
+    .modal-overlay.open .modal { transform:scale(1) translateY(0); }
+    .modal-close {
+      position:sticky; top:0; float:right;
+      margin:1rem;
+      width:38px; height:38px;
+      background:var(--green); color:var(--white);
+      border:none; border-radius:4px;
+      font-size:1.3rem; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      z-index:10; transition:background .15s;
+    }
+    .modal-close:hover { background:var(--orange); }
+    .modal-img {
+      width:100%; height:320px;
+      object-fit:cover; display:block;
+      border-radius:12px 12px 0 0;
+    }
+    .modal-body { padding:2rem 2.4rem 2.5rem; }
+    .modal-tag {
+      display:inline-block;
+      background:var(--orange); color:var(--white);
+      font-size:.72rem; font-weight:800;
+      letter-spacing:.1em; text-transform:uppercase;
+      padding:.28rem .8rem; border-radius:2px;
+      margin-bottom:.8rem;
+    }
+    .modal-body h2 {
+      font-size:1.9rem; font-weight:800;
+      color:var(--green); margin-bottom:.3rem;
+    }
+    .modal-latin {
+      font-size:.9rem; color:var(--text-lt);
+      font-style:italic; margin-bottom:1.2rem;
+    }
+    .modal-body p { font-size:.98rem; line-height:1.75; color:var(--text); margin-bottom:1.2rem; }
+    .modal-facts {
+      display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr));
+      gap:.8rem; margin-top:1.5rem;
+    }
+    .fact-box {
+      background:var(--off-white);
+      border-radius:6px; padding:1rem;
+      border-left:4px solid var(--orange);
+    }
+    .fact-box dt {
+      font-size:.72rem; font-weight:700; letter-spacing:.07em;
+      text-transform:uppercase; color:var(--text-lt);
+      margin-bottom:.25rem;
+    }
+    .fact-box dd { font-size:.95rem; font-weight:700; color:var(--green); }
+
+    /* KEYBOARD HINT */
+    .key-hint {
+      position:fixed; bottom:1.5rem; right:1.5rem;
+      background:var(--green); color:var(--white);
+      font-size:.78rem; padding:.6rem 1rem;
+      border-radius:4px; box-shadow:0 4px 16px rgba(0,0,0,.25);
+      z-index:999; opacity:0; transform:translateY(10px);
+      transition:opacity .3s, transform .3s; pointer-events:none;
+    }
+    .key-hint.show { opacity:1; transform:translateY(0); }
+    .key-hint kbd { background:rgba(255,255,255,.15); border-radius:3px; padding:.1rem .4rem; }
+
+    /* CURSOR */
+    #cursor-dot {
+      width:8px; height:8px;
+      background:var(--orange); border-radius:50%;
+      position:fixed; pointer-events:none; z-index:9999;
+      transform:translate(-50%,-50%); opacity:0;
+      transition:opacity .3s;
+    }
+
+    footer {
+      background:var(--green); color:rgba(255,255,255,.7);
+      text-align:center; padding:2.4rem 2rem;
+      font-size:.88rem; margin-top:4rem;
+    }
+    footer strong { color:var(--white); }
+    footer .footer-links { display:flex; gap:2rem; justify-content:center; margin-bottom:1rem; flex-wrap:wrap; }
+    footer .footer-links a { color:rgba(255,255,255,.7); text-decoration:none; transition:color .15s; }
+    footer .footer-links a:hover { color:var(--orange); }
+
+    @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+    .animal-card { animation:fadeIn .35s ease both; }
+
+    @media(max-width:700px) {
+      nav { padding:0 1.2rem; }
+      .animals-main { padding:2rem 1rem; }
+      .filter-inner { padding:.8rem 1rem; gap:.4rem; }
+      .search-input { width:130px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div class="key-hint" id="keyHint"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">🌿 TERRA <span>FAUNA</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Главная</a></li>
+    <li><a href="animals.html" class="active">Животные</a></li>
+    <li><a href="contacts.html">Контакты</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-content">
+    <span class="label">Наши обитатели</span>
+    <h1>Животные Терра Фауна</h1>
+    <p>Более 500 видов со всего мира. Нажмите на животное, чтобы узнать о нём больше.</p>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filter-wrap">
+  <div class="filter-inner">
+    <span class="filter-label">Фильтр:</span>
+    <button class="filter-btn active" data-cat="all">Все виды</button>
+    <button class="filter-btn" data-cat="Млекопитающие">🦁 Млекопитающие</button>
+    <button class="filter-btn" data-cat="Птицы">🦅 Птицы</button>
+    <button class="filter-btn" data-cat="Рептилии">🐊 Рептилии</button>
+    <button class="filter-btn" data-cat="Рыбы">🐠 Рыбы &amp; Аквариум</button>
+    <div class="search-wrap">
+      <input class="search-input" type="text" id="searchInput" placeholder="🔍 Поиск по имени…" />
+    </div>
+  </div>
+</div>
+
+<!-- ANIMALS GRID -->
+<div class="animals-main">
+  <div class="grid-count" id="gridCount"></div>
+  <div class="animals-grid" id="animalsGrid"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" id="modalClose">✕</button>
+    <img class="modal-img" id="modalImg" src="" alt="" />
+    <div class="modal-body">
+      <div class="modal-tag" id="modalTag"></div>
+      <h2 id="modalName"></h2>
+      <p class="modal-latin" id="modalLatin"></p>
+      <p id="modalDesc"></p>
+      <div class="modal-facts" id="modalFacts"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Главная</a>
+    <a href="animals.html">Животные</a>
+    <a href="contacts.html">Контакты</a>
+  </div>
+  <p><strong>© 2026 Терра Фауна</strong> · ул. Зелёная, 10 · +7 (999) 123-45-67</p>
+</footer>
+
+<script>
+  const dot = document.getElementById('cursor-dot');
+  document.addEventListener('mousemove', e => {
+    dot.style.left = e.clientX+'px'; dot.style.top = e.clientY+'px'; dot.style.opacity='1';
+  });
+
+  const animals = [
+    {
+      name:'Африканский лев', latin:'Panthera leo', cat:'Млекопитающие',
+      img:'https://minskzoo.by/wp-content/uploads/2021/11/DSC_0062-2-1-scaled.jpg',
+      short:'Царь зверей. Живёт в африканском секторе зоопарка.',
+      desc:'Африканский лев — самый крупный хищник Африки и один из символов природы. В Терра Фауна содержится прайд из 6 особей. Львы наиболее активны утром и вечером; в дневное время их можно застать отдыхающими на скалах вольера.',
+      facts:[{k:'Вес',v:'120–250 кг'},{k:'Длина',v:'до 2,5 м'},{k:'Продолжительность жизни',v:'12–16 лет'},{k:'Статус',v:'Уязвимый'}]
+    },
+    {
+      name:'Жираф', latin:'Giraffa camelopardalis', cat:'Млекопитающие',
+      img:'https://naked-science.ru/wp-content/uploads/2016/05/field_image_5670291793_743c19e30f_b.jpg',
+      short:'Самое высокое животное планеты. Достигает 6 метров.',
+      desc:'Жираф — самое высокое наземное животное на Земле. Наши жирафы живут в просторном открытом вольере, с высокой кормовой платформой. Гости могут лично угостить их листьями акации — это незабываемый опыт!',
+      facts:[{k:'Высота',v:'до 6 м'},{k:'Вес',v:'до 1750 кг'},{k:'Язык',v:'до 45 см'},{k:'Статус',v:'Уязвимый'}]
+    },
+    {
+      name:'Снежный барс', latin:'Panthera uncia', cat:'Млекопитающие',
+      img:'https://ic.pics.livejournal.com/alexeyosokin/55047576/1117749/1117749_original.jpg',
+      short:'Редчайший горный хищник с красивейшим мехом.',
+      desc:'Снежный барс, или ирбис — один из самых загадочных хищников. Обитает в горах Центральной Азии. В нашем зоопарке живут двое особей: самец Зефир и самка Жемчужина. Вольер создан с учётом горного рельефа.',
+      facts:[{k:'Вес',v:'22–55 кг'},{k:'Длина хвоста',v:'до 1 м'},{k:'Высота обитания',v:'3000–5500 м'},{k:'Статус',v:'Уязвимый'}]
+    },
+    {
+      name:'Слон африканский', latin:'Loxodonta africana', cat:'Млекопитающие',
+      img:'https://animalzoom.ru/sites/default/files/field/image/africanskii-slon-1.jpg',
+      short:'Самое крупное наземное животное Земли.',
+      desc:'Африканский слон — символ силы и мудрости. Семья из трёх слонов живёт в нашем просторном слоновнике. Ежедневно в 10:00 и 16:00 проходит шоу кормления, на котором можно наблюдать за ловкостью их хоботов.',
+      facts:[{k:'Вес',v:'до 6000 кг'},{k:'Высота',v:'до 4 м'},{k:'Память',v:'помнит 50+ лет'},{k:'Статус',v:'Уязвимый'}]
+    },
+    {
+      name:'Попугай Ара', latin:'Ara macao', cat:'Птицы',
+      img:'https://www.bethowen.ru/upload/iblock/2ff/2ff7ce450b2ae901a1d43248f43c27b4.jpg',
+      short:'Яркий и умный житель тропического павильона.',
+      desc:'Попугай Ара — одна из самых крупных и красочных птиц в мире. Их словарный запас достигает 100 слов. В нашем тропическом павильоне живёт колония из 12 особей. Ежедневно проводятся интерактивные шоу с дрессировщиком.',
+      facts:[{k:'Размах крыльев',v:'до 100 см'},{k:'Продолжительность жизни',v:'до 80 лет'},{k:'Голос',v:'до 100 слов'},{k:'Статус',v:'Под угрозой'}]
+    },
+    {
+      name:'Пеликан розовый', latin:'Pelecanus onocrotalus', cat:'Птицы',
+      img:'https://12-kanal.ru/upload/iblock/42b/hzvuy42t8u05rjwv9cpvlken32bkv2b2/photo.jpg',
+      short:'Грациозный рыболов у берегов нашего озера.',
+      desc:'Розовый пеликан — крупная водоплавающая птица с характерным мешком под клювом. В Терра Фауна пеликаны свободно гуляют у искусственного озера и нередко подходят к гостям. Кормление проходит ежедневно в 11:00.',
+      facts:[{k:'Размах крыльев',v:'до 3,6 м'},{k:'Вместимость мешка',v:'до 13 л'},{k:'Масса',v:'до 14 кг'},{k:'Статус',v:'Наименьшие опасения'}]
+    },
+    {
+      name:'Страус', latin:'Struthio camelus', cat:'Птицы',
+      img:'https://nnzoo.ru/wp-content/uploads/2025/04/straus.jpg',
+      short:'Самая крупная нелетающая птица. Бегает быстрее лошади.',
+      desc:'Страус — самая большая птица на планете и самое быстрое двуногое существо. Развивает скорость до 70 км/ч. В нашем парке живёт группа из 5 особей на открытой савановой площадке. Их яйца — самые крупные в мире.',
+      facts:[{k:'Высота',v:'до 2,7 м'},{k:'Вес',v:'до 160 кг'},{k:'Скорость',v:'до 70 км/ч'},{k:'Яйцо',v:'до 2 кг'}]
+    },
+    {
+      name:'Нильский крокодил', latin:'Crocodylus niloticus', cat:'Рептилии',
+      img:'https://oceanpenza.ru/wp-content/uploads/2019/08/IMG_0441.jpg',
+      short:'Древнейший хищник, живущий с эпохи динозавров.',
+      desc:'Нильский крокодил — один из самых крупных и опасных хищников Африки. В Терра Фауна находится пять особей в специализированном тропическом вольере с бассейном. Сила укуса — одна из сильнейших среди всех животных.',
+      facts:[{k:'Длина',v:'до 6 м'},{k:'Вес',v:'до 1000 кг'},{k:'Возраст',v:'до 100 лет'},{k:'Скорость',v:'до 17 км/ч'}]
+    },
+    {
+      name:'Гигантская черепаха', latin:'Aldabrachelys gigantea', cat:'Рептилии',
+      img:'https://upload.wikimedia.org/wikipedia/commons/1/16/Giant_Tortoise.JPG',
+      short:'Живёт до 150 лет и помнит несколько поколений.',
+      desc:'Гигантская черепаха с Альдабры — один из символов долголетия. Наша черепаха Тиша, по оценке учёных, уже более 100 лет. Они чрезвычайно спокойны и дружелюбны — туристы могут их погладить под присмотром смотрителей.',
+      facts:[{k:'Длина панциря',v:'до 1,2 м'},{k:'Вес',v:'до 300 кг'},{k:'Возраст',v:'до 150+ лет'},{k:'Статус',v:'Уязвимый'}]
+    },
+    {
+      name:'Хамелеон Джексона', latin:'Trioceros jacksonii', cat:'Рептилии',
+      img:'https://upload.wikimedia.org/wikipedia/commons/6/61/Jackson%27s-chameleon-2.jpg',
+      short:'Меняет цвет и имеет три рога — как настоящий дракон.',
+      desc:'Хамелеон Джексона — удивительное существо, способное изменять цвет кожи для маскировки и общения. Самцы отличаются тремя характерными рогами. Наш террариум оборудован для демонстрации поведения хамелеонов.',
+      facts:[{k:'Длина',v:'25–35 см'},{k:'Язык',v:'длиннее тела'},{k:'Скорость языка',v:'до 10 м/с'},{k:'Статус',v:'Наименьшие опасения'}]
+    },
+    {
+      name:'Акула тигровая', latin:'Galeocerdo cuvier', cat:'Рыбы',
+      img:'https://upload.wikimedia.org/wikipedia/commons/1/12/Scarface-tigershark.jpg',
+      short:'Звезда нашего гигантского аквариума.',
+      desc:'Тигровая акула — одна из самых крупных хищных акул в мире. В нашем аквариуме объёмом 1 500 000 литров обитает несколько экземпляров. Стеклянный тоннель позволяет гостям пройти прямо под плывущими акулами.',
+      facts:[{k:'Длина',v:'до 5,5 м'},{k:'Вес',v:'до 900 кг'},{k:'Скорость',v:'до 32 км/ч'},{k:'Зубы',v:'обновляются всю жизнь'}]
+    },
+    {
+      name:'Электрический угорь', latin:'Electrophorus electricus', cat:'Рыбы',
+      img:'https://naked-science.ru/wp-content/uploads/2022/06/Electrophorus-electricus-Giuseppe-Mazza.jpg',
+      short:'Генерирует разряды до 600 вольт.',
+      desc:'Электрический угорь — один из самых удивительных обитателей аквариума. Он способен генерировать электрические разряды мощностью до 600 В. Специальные датчики в нашем аквариуме переводят сигналы угря в звук — гости слышат его «язык»!',
+      facts:[{k:'Длина',v:'до 2,5 м'},{k:'Напряжение',v:'до 600 В'},{k:'Дышит',v:'воздухом'},{k:'Зрение',v:'очень слабое'}]
+    },
+  ];
+
+  let currentCat = 'all', currentSearch = '';
+
+  function renderGrid() {
+    const grid = document.getElementById('animalsGrid');
+    const count = document.getElementById('gridCount');
+    grid.innerHTML = '';
+    const filtered = animals.filter(a => {
+      const catOk = currentCat === 'all' || a.cat === currentCat;
+      const searchOk = a.name.toLowerCase().includes(currentSearch.toLowerCase());
+      return catOk && searchOk;
+    });
+    count.textContent = `Найдено: ${filtered.length} животных`;
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="no-results">🐾 Ничего не найдено. Попробуйте другой фильтр или запрос.</div>';
+      return;
+    }
+    filtered.forEach((a, i) => {
+      const card = document.createElement('div');
+      card.className = 'animal-card';
+      card.style.animationDelay = (i * 55) + 'ms';
+      card.innerHTML = `
+        <div class="card-img-wrap">
+          <img class="card-img" src="${a.img}" alt="${a.name}" loading="lazy"/>
+        </div>
+        <div class="card-body">
+          <div class="card-tag">${a.cat}</div>
+          <h3>${a.name}</h3>
+          <p>${a.short}</p>
+          <div class="card-arrow">Подробнее →</div>
+        </div>`;
+      card.addEventListener('click', () => openModal(a));
+
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - .5;
+        const y = (e.clientY - r.top)  / r.height - .5;
+        card.style.transform = `translateY(-7px) rotateY(${x*10}deg) rotateX(${-y*7}deg)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+      grid.appendChild(card);
+    });
+  }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCat = btn.dataset.cat;
+      renderGrid();
+    });
+  });
+
+  document.getElementById('searchInput').addEventListener('input', e => {
+    currentSearch = e.target.value;
+    renderGrid();
+  });
+
+  function openModal(a) {
+    document.getElementById('modalImg').src = a.img;
+    document.getElementById('modalImg').alt = a.name;
+    document.getElementById('modalTag').textContent = a.cat;
+    document.getElementById('modalName').textContent = a.name;
+    document.getElementById('modalLatin').textContent = a.latin;
+    document.getElementById('modalDesc').textContent = a.desc;
+    document.getElementById('modalFacts').innerHTML = a.facts.map(f =>
+      `<div class="fact-box"><dt>${f.k}</dt><dd>${f.v}</dd></div>`).join('');
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  });
+
+  const keyHint = document.getElementById('keyHint');
+  let kt;
+  function showHint(msg) {
+    keyHint.innerHTML = msg; keyHint.classList.add('show');
+    clearTimeout(kt); kt = setTimeout(() => keyHint.classList.remove('show'), 2200);
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeModal();
+      showHint('<kbd>Esc</kbd> Закрыто');
+    } else if (e.key === 'ArrowRight') {
+      showHint('<kbd>→</kbd> Переход: Контакты');
+      setTimeout(() => location.href = 'contacts.html', 400);
+    } else if (e.key === 'ArrowLeft') {
+      showHint('<kbd>←</kbd> Переход: Главная');
+      setTimeout(() => location.href = 'index.html', 400);
+    } else if (e.key === '1') { document.querySelector('[data-cat="all"]').click(); showHint('<kbd>1</kbd> Все виды'); }
+    else if (e.key === '2') { document.querySelector('[data-cat="Млекопитающие"]').click(); showHint('<kbd>2</kbd> Млекопитающие'); }
+    else if (e.key === '3') { document.querySelector('[data-cat="Птицы"]').click(); showHint('<kbd>3</kbd> Птицы'); }
+    else if (e.key === '4') { document.querySelector('[data-cat="Рептилии"]').click(); showHint('<kbd>4</kbd> Рептилии'); }
+    else if (e.key === '5') { document.querySelector('[data-cat="Рыбы"]').click(); showHint('<kbd>5</kbd> Рыбы'); }
+    else if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey) {
+      document.getElementById('searchInput').focus();
+      showHint('<kbd>F</kbd> Поиск');
+    }
+  });
+
+  renderGrid();
+</script>
+</body>
+</html>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Терра Фауна — Контакты</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:    #1a3d2b;
+      --green-mid:#2a5e3f;
+      --orange:   #e8600a;
+      --orange-lt:#f4874b;
+      --white:    #ffffff;
+      --off-white:#f5f2ed;
+      --text:     #1a1a1a;
+      --text-lt:  #5a5a5a;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family:'Open Sans', sans-serif;
+      background:var(--off-white);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:1000;
+      background:var(--green);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 3rem; height:68px;
+      box-shadow:0 2px 16px rgba(0,0,0,.35);
+    }
+    .nav-logo {
+      font-size:1.4rem; font-weight:800; color:var(--white);
+      letter-spacing:.05em; text-decoration:none;
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .nav-logo span { color:var(--orange); }
+    .nav-links { display:flex; gap:.4rem; list-style:none; }
+    .nav-links a {
+      color:var(--white); text-decoration:none;
+      font-weight:600; font-size:.95rem;
+      padding:.45rem 1.1rem; border-radius:4px;
+      transition:background .18s, color .18s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      background:var(--orange); color:var(--white);
+    }
+
+    .page-header {
+      background:var(--green); padding:7rem 2rem 4rem;
+      text-align:center; color:var(--white);
+      position:relative; overflow:hidden;
+    }
+    .page-header::before {
+      content:''; position:absolute; inset:0;
+      background-image:url('https://images.unsplash.com/photo-1567610898253-6f96e7c7c3bc?w=1400&q=70');
+      background-size:cover; background-position:center; opacity:.15;
+    }
+    .page-header-content { position:relative; z-index:1; }
+    .page-header .label {
+      font-size:.75rem; font-weight:700; letter-spacing:.15em;
+      text-transform:uppercase; color:var(--orange-lt); display:block; margin-bottom:.6rem;
+    }
+    .page-header h1 {
+      font-size:clamp(2rem,5vw,3.4rem); font-weight:800; margin-bottom:.8rem;
+    }
+    .page-header p { font-size:1.05rem; opacity:.75; max-width:480px; margin:0 auto; }
+
+    .main-wrap {
+      max-width:1200px; margin:0 auto;
+      padding:4rem 2rem 5rem;
+      display:grid;
+      grid-template-columns:1fr 1.1fr;
+      gap:4rem;
+      align-items:start;
+    }
+
+    .section-label {
+      font-size:.75rem; font-weight:700; letter-spacing:.15em;
+      text-transform:uppercase; color:var(--orange); margin-bottom:.5rem;
+    }
+    .section-title {
+      font-size:1.6rem; font-weight:800; color:var(--green); margin-bottom:1.8rem;
+    }
+    .info-list { display:flex; flex-direction:column; gap:1rem; margin-bottom:2.5rem; }
+    .info-item {
+      display:flex; align-items:flex-start; gap:1rem;
+      background:var(--white); border-radius:8px;
+      padding:1.2rem 1.4rem;
+      box-shadow:0 2px 8px rgba(0,0,0,.06);
+      transition:transform .2s, box-shadow .2s;
+    }
+    .info-item:hover { transform:translateX(4px); box-shadow:0 4px 16px rgba(0,0,0,.1); }
+    .info-icon {
+      width:42px; height:42px; border-radius:6px;
+      background:var(--green); color:var(--white);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.15rem; flex-shrink:0;
+    }
+    .info-text dt {
+      font-size:.75rem; font-weight:700; letter-spacing:.08em;
+      text-transform:uppercase; color:var(--text-lt); margin-bottom:.25rem;
+    }
+    .info-text dd { font-size:.98rem; font-weight:600; color:var(--text); line-height:1.5; }
+
+    .hours-table { width:100%; border-collapse:collapse; margin-top:.6rem; }
+    .hours-table td { padding:.5rem 0; font-size:.92rem; }
+    .hours-table td:first-child { color:var(--text-lt); }
+    .hours-table td:last-child { font-weight:700; text-align:right; }
+    .hours-table tr:not(:last-child) td { border-bottom:1px solid rgba(0,0,0,.07); }
+
+    .map-wrap {
+      margin-top:2.5rem;
+      border-radius:8px; overflow:hidden;
+      box-shadow:0 4px 20px rgba(0,0,0,.12);
+      position:relative;
+    }
+    .map-wrap iframe {
+      width:100%; height:300px; border:none; display:block;
+      filter:saturate(.85);
+    }
+    .map-label {
+      position:absolute; bottom:0; left:0; right:0;
+      background:var(--green); color:var(--white);
+      padding:.7rem 1.2rem; font-size:.85rem; font-weight:600;
+      display:flex; align-items:center; gap:.5rem;
+    }
+
+    .map-canvas-wrap {
+      background:var(--white); border-radius:8px;
+      overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.08);
+      margin-top:1rem;
+    }
+    .map-canvas-header {
+      background:var(--green); color:var(--white);
+      padding:.7rem 1.2rem; font-size:.85rem; font-weight:700;
+      display:flex; align-items:center; gap:.5rem;
+    }
+    #mapCanvas {
+      width:100%; height:240px; display:block; cursor:crosshair;
+      background:#c8d8b8;
+    }
+    .map-canvas-hint {
+      font-size:.75rem; color:var(--text-lt);
+      padding:.5rem 1rem; background:var(--off-white);
+    }
+
+    .form-card {
+      background:var(--white); border-radius:8px;
+      padding:2.5rem; box-shadow:0 4px 20px rgba(0,0,0,.09);
+    }
+    .form-card .section-title { margin-bottom:.4rem; }
+    .form-sub { font-size:.92rem; color:var(--text-lt); line-height:1.6; margin-bottom:2rem; }
+
+    .form-group { margin-bottom:1.2rem; }
+    label {
+      display:block; font-size:.8rem; font-weight:700;
+      letter-spacing:.06em; text-transform:uppercase;
+      color:var(--text-lt); margin-bottom:.4rem;
+    }
+    input[type=text], input[type=email], select, textarea {
+      width:100%; padding:.8rem 1rem;
+      border:2px solid rgba(0,0,0,.1);
+      border-radius:6px;
+      font-family:'Open Sans', sans-serif;
+      font-size:.95rem; color:var(--text);
+      background:var(--off-white);
+      transition:border-color .2s, background .2s, transform .15s;
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color:var(--orange);
+      background:var(--white);
+      transform:scale(1.01);
+    }
+    input.error, textarea.error { border-color:#d63031; }
+    textarea { resize:vertical; min-height:130px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+    .char-count {
+      text-align:right; font-size:.75rem; color:var(--text-lt);
+      margin-top:.3rem;
+    }
+
+    .submit-btn {
+      width:100%; padding:1rem;
+      background:var(--green); color:var(--white);
+      border:none; border-radius:6px;
+      font-family:'Open Sans', sans-serif;
+      font-size:1rem; font-weight:700;
+      cursor:pointer; letter-spacing:.03em;
+      transition:background .18s, transform .15s, box-shadow .15s;
+      margin-top:.5rem;
+      position:relative; overflow:hidden;
+    }
+    .submit-btn:hover {
+      background:var(--orange);
+      transform:translateY(-2px);
+      box-shadow:0 6px 20px rgba(232,96,10,.35);
+    }
+    .submit-btn:active { transform:translateY(0); }
+
+    .ripple {
+      position:absolute; border-radius:50%;
+      background:rgba(255,255,255,.35);
+      transform:scale(0);
+      animation:ripple .55s linear;
+      pointer-events:none;
+    }
+    @keyframes ripple { to { transform:scale(4); opacity:0; } }
+
+    .success-msg {
+      display:none; text-align:center;
+      padding:2rem; animation:fadeInMsg .4s ease;
+    }
+    .success-msg.show { display:block; }
+    .success-icon {
+      width:64px; height:64px; border-radius:50%;
+      background:var(--green); color:var(--white);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.8rem; margin:0 auto 1rem;
+    }
+    .success-msg h3 { font-size:1.3rem; font-weight:800; color:var(--green); margin-bottom:.5rem; }
+    .success-msg p { color:var(--text-lt); font-size:.95rem; margin-bottom:1.2rem; }
+    .reset-btn {
+      background:transparent; border:2px solid var(--green);
+      color:var(--green); padding:.55rem 1.4rem;
+      border-radius:4px; font-family:'Open Sans',sans-serif;
+      font-weight:700; cursor:pointer; transition:.15s;
+    }
+    .reset-btn:hover { background:var(--green); color:var(--white); }
+
+    @keyframes fadeInMsg { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+
+    .field-err { font-size:.75rem; color:#d63031; margin-top:.25rem; display:none; }
+    .field-err.show { display:block; }
+
+    .particles { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+    .particle {
+      position:absolute; border-radius:50%;
+      opacity:.06;
+      animation:float linear infinite;
+    }
+    @keyframes float {
+      0%   { transform:translateY(110vh) rotate(0deg); }
+      100% { transform:translateY(-10vh) rotate(360deg); }
+    }
+
+    .key-hint {
+      position:fixed; bottom:1.5rem; right:1.5rem;
+      background:var(--green); color:var(--white);
+      font-size:.78rem; padding:.6rem 1rem;
+      border-radius:4px; box-shadow:0 4px 16px rgba(0,0,0,.25);
+      z-index:999; opacity:0; transform:translateY(10px);
+      transition:opacity .3s, transform .3s; pointer-events:none;
+    }
+    .key-hint.show { opacity:1; transform:translateY(0); }
+    .key-hint kbd { background:rgba(255,255,255,.15); border-radius:3px; padding:.1rem .4rem; }
+
+    #cursor-dot {
+      width:8px; height:8px; background:var(--orange); border-radius:50%;
+      position:fixed; pointer-events:none; z-index:9999;
+      transform:translate(-50%,-50%); opacity:0; transition:opacity .3s;
+    }
+
+    footer {
+      background:var(--green); color:rgba(255,255,255,.7);
+      text-align:center; padding:2.4rem 2rem; font-size:.88rem;
+    }
+    footer strong { color:var(--white); }
+    footer .footer-links { display:flex; gap:2rem; justify-content:center; margin-bottom:1rem; flex-wrap:wrap; }
+    footer .footer-links a { color:rgba(255,255,255,.7); text-decoration:none; transition:color .15s; }
+    footer .footer-links a:hover { color:var(--orange); }
+
+    @media(max-width:900px) {
+      .main-wrap { grid-template-columns:1fr; gap:2.5rem; }
+    }
+    @media(max-width:600px) {
+      nav { padding:0 1.2rem; }
+      .main-wrap { padding:2.5rem 1rem; }
+      .form-row { grid-template-columns:1fr; }
+      .form-card { padding:1.8rem 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div class="key-hint" id="keyHint"></div>
+
+<div class="particles" id="particles"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">🌿 TERRA <span>FAUNA</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Главная</a></li>
+    <li><a href="animals.html">Животные</a></li>
+    <li><a href="contacts.html" class="active">Контакты</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-content">
+    <span class="label">Связь с нами</span>
+    <h1>Контакты</h1>
+    <p>Мы всегда рады вашим вопросам, отзывам и предложениям.</p>
+  </div>
+</div>
+
+<div class="main-wrap">
+  <div>
+    <div class="section-label">Где мы находимся</div>
+    <h2 class="section-title">Информация о посещении</h2>
+
+    <div class="info-list">
+      <div class="info-item">
+        <div class="info-icon">📍</div>
+        <dl class="info-text">
+          <dt>Адрес</dt>
+          <dd>ул. Зелёная, 10, Терра Фауна Парк<br><span style="font-weight:400;color:var(--text-lt)">м. Ботанический сад, выход 2</span></dd>
+        </dl>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">📞</div>
+        <dl class="info-text">
+          <dt>Телефон</dt>
+          <dd>+7 (999) 123-45-67</dd>
+        </dl>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">✉️</div>
+        <dl class="info-text">
+          <dt>Электронная почта</dt>
+          <dd>hello@terrafauna.ru</dd>
+        </dl>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🕒</div>
+        <dl class="info-text">
+          <dt>Режим работы</dt>
+          <dd>
+            <table class="hours-table">
+              <tr><td>Пн — Пт</td><td>09:00 – 19:00</td></tr>
+              <tr><td>Сб — Вс</td><td>09:00 – 21:00</td></tr>
+              <tr><td>Праздники</td><td>09:00 – 21:00</td></tr>
+            </table>
+          </dd>
+        </dl>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🎟️</div>
+        <dl class="info-text">
+          <dt>Стоимость билетов</dt>
+          <dd>Взрослый — 800 ₽ · Детский (до 12) — 400 ₽<br>Семейный (2+2) — 2 000 ₽</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="map-canvas-wrap">
+      <div class="map-canvas-header">🗺️ Схема парка (интерактивная)</div>
+      <canvas id="mapCanvas" width="600" height="240"></canvas>
+      <div class="map-canvas-hint">Кликайте и перемещайте мышь — отметьте любимые вольеры!</div>
+    </div>
+
+    <div class="map-wrap" style="margin-top:1.5rem;">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2244.8!2d37.5786!3d55.7291!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTXCsDQzJzQ0LjgiTiAzN8KwMzQnNTEuOCJF!5e0!3m2!1sru!2sru!4v1700000000000!5m2!1sru!2sru"
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+      <div class="map-label">📍 ул. Зелёная, 10 · Терра Фауна Парк</div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="section-label">Напишите нам</div>
+    <h2 class="section-title">Задать вопрос администрации</h2>
+    <p class="form-sub">Есть вопрос о животных, экскурсиях или билетах? Хотите организовать корпоратив или день рождения в зоопарке? Напишите — мы ответим в течение одного рабочего дня.</p>
+
+    <form id="contactForm" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fname">Имя *</label>
+          <input type="text" id="fname" placeholder="Александра" autocomplete="given-name" />
+          <div class="field-err" id="err-fname">Введите ваше имя</div>
+        </div>
+        <div class="form-group">
+          <label for="lname">Фамилия</label>
+          <input type="text" id="lname" placeholder="Иванова" autocomplete="family-name" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input type="email" id="email" placeholder="example@mail.ru" autocomplete="email" />
+        <div class="field-err" id="err-email">Введите корректный email</div>
+      </div>
+      <div class="form-group">
+        <label for="topic">Тема обращения</label>
+        <select id="topic">
+          <option value="">— Выберите тему —</option>
+          <option value="tickets">Билеты и цены</option>
+          <option value="tours">Экскурсии и мероприятия</option>
+          <option value="animals">Вопрос о животных</option>
+          <option value="corp">Корпоративное посещение</option>
+          <option value="volunteer">Волонтёрство</option>
+          <option value="other">Другое</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Сообщение *</label>
+        <textarea id="message" placeholder="Опишите ваш вопрос подробнее…" maxlength="800"></textarea>
+        <div class="char-count"><span id="charLeft">800</span> символов осталось</div>
+        <div class="field-err" id="err-message">Напишите сообщение (минимум 10 символов)</div>
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Отправить сообщение ✉️
+      </button>
+    </form>
+
+    <div class="success-msg" id="successMsg">
+      <div class="success-icon">✓</div>
+      <h3>Сообщение отправлено!</h3>
+      <p>Спасибо за обращение. Мы свяжемся с вами в течение одного рабочего дня.</p>
+      <button class="reset-btn" id="resetBtn">Отправить ещё одно</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Главная</a>
+    <a href="animals.html">Животные</a>
+    <a href="contacts.html">Контакты</a>
+  </div>
+  <p><strong>© 2026 Терра Фауна</strong> · ул. Зелёная, 10 · +7 (999) 123-45-67</p>
+</footer>
+
+<script>
+  const dot = document.getElementById('cursor-dot');
+  document.addEventListener('mousemove', e => {
+    dot.style.left = e.clientX+'px'; dot.style.top = e.clientY+'px'; dot.style.opacity='1';
+  });
+
+  const particlesEl = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 20 + Math.random() * 60;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      background:${Math.random() > .5 ? '#1a3d2b' : '#e8600a'};
+      animation-duration:${12 + Math.random()*18}s;
+      animation-delay:${-Math.random()*20}s;
+    `;
+    particlesEl.appendChild(p);
+  }
+
+  const canvas = document.getElementById('mapCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  let painting = false;
+  let trails = [];
+
+  function drawMapBg() {
+    ctx.fillStyle = '#c8d9b0';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#b5c9a1';
+    ctx.fillRect(80, 0, 30, H);
+    ctx.fillRect(0, 90, W, 28);
+    ctx.fillRect(280, 0, 28, H);
+    const zones = [
+      { x:10, y:10, w:65, h:75, color:'#a3c48a', label:'Хищники' },
+      { x:120, y:10, w:150, h:75, color:'#8dbf7a', label:'Слоны' },
+      { x:320, y:10, w:130, h:75, color:'#95c47a', label:'Саванна' },
+      { x:465, y:10, w:125, h:75, color:'#87b96e', label:'Птицы' },
+      { x:10, y:128, w:65, h:100, color:'#7aad65', label:'Рептилии' },
+      { x:120, y:128, w:150, h:100, color:'#8abf74', label:'Аквариум' },
+      { x:320, y:128, w:130, h:100, color:'#9ac87e', label:'Обезьяны' },
+      { x:465, y:128, w:125, h:100, color:'#82b56a', label:'Травоядные' },
+    ];
+    zones.forEach(z => {
+      ctx.fillStyle = z.color;
+      ctx.beginPath();
+      ctx.roundRect(z.x, z.y, z.w, z.h, 6);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.5)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = '#1a3d2b';
+      ctx.font = 'bold 10px Open Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(z.label, z.x + z.w/2, z.y + z.h/2 + 4);
+    });
+    ctx.fillStyle = '#e8600a';
+    ctx.beginPath(); ctx.roundRect(W/2-30, H-32, 60, 28, 4); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 10px Open Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🚪 ВХОД', W/2, H-14);
+  }
+  drawMapBg();
+
+  function drawTrails() {
+    trails.forEach(t => {
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(232,96,10,${t.alpha})`;
+      ctx.fill();
+    });
+  }
+
+  function redraw() {
+    ctx.clearRect(0,0,W,H);
+    drawMapBg();
+    drawTrails();
+  }
+
+  setInterval(() => {
+    let changed = false;
+    trails.forEach(t => { t.alpha -= .025; if(t.alpha < 0) t.alpha = 0; else changed=true; });
+    trails = trails.filter(t => t.alpha > 0);
+    if(changed) redraw();
+  }, 50);
+
+  function addTrail(e) {
+    const r = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / r.width;
+    const scaleY = canvas.height / r.height;
+    const x = (e.clientX - r.left) * scaleX;
+    const y = (e.clientY - r.top) * scaleY;
+    trails.push({ x, y, r: 6, alpha: .8 });
+    redraw();
+  }
+
+  canvas.addEventListener('mousedown', e => { painting = true; addTrail(e); });
+  canvas.addEventListener('mousemove', e => { if(painting) addTrail(e); });
+  canvas.addEventListener('mouseup', () => painting = false);
+  canvas.addEventListener('mouseleave', () => painting = false);
+
+  canvas.addEventListener('click', e => {
+    const r = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / r.width;
+    const scaleY = canvas.height / r.height;
+    const x = (e.clientX - r.left) * scaleX;
+    const y = (e.clientY - r.top) * scaleY;
+    ctx.beginPath();
+    ctx.arc(x, y, 14, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,.6)';
+    ctx.fill();
+    setTimeout(redraw, 300);
+  });
+
+  const msgArea = document.getElementById('message');
+  const charLeft = document.getElementById('charLeft');
+  msgArea.addEventListener('input', () => {
+    charLeft.textContent = 800 - msgArea.value.length;
+  });
+
+  const form = document.getElementById('contactForm');
+  const successMsg = document.getElementById('successMsg');
+
+  function showErr(id, show) {
+    const el = document.getElementById(id);
+    el.classList.toggle('show', show);
+    document.getElementById(id.replace('err-','')).classList.toggle('error', show);
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const fname = document.getElementById('fname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const msg   = document.getElementById('message').value.trim();
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let valid = true;
+
+    showErr('err-fname', fname.length < 2); if(fname.length < 2) valid=false;
+    showErr('err-email', !emailRe.test(email)); if(!emailRe.test(email)) valid=false;
+    showErr('err-message', msg.length < 10); if(msg.length < 10) valid=false;
+
+    if (!valid) {
+      const btn = document.getElementById('submitBtn');
+      btn.style.animation = 'shake .35s';
+      setTimeout(() => btn.style.animation='', 400);
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    const sz = Math.max(btn.clientWidth, btn.clientHeight);
+    ripple.style.cssText = `width:${sz}px;height:${sz}px;left:50%;top:50%;margin:-${sz/2}px 0 0 -${sz/2}px`;
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+
+    setTimeout(() => {
+      form.style.display='none';
+      successMsg.classList.add('show');
+    }, 350);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    form.reset(); charLeft.textContent='800';
+    form.style.display='block';
+    successMsg.classList.remove('show');
+    ['err-fname','err-email','err-message'].forEach(id => showErr(id, false));
+  });
+
+  const keyHint = document.getElementById('keyHint');
+  let kt;
+  function showHint(msg) {
+    keyHint.innerHTML = msg; keyHint.classList.add('show');
+    clearTimeout(kt); kt = setTimeout(() => keyHint.classList.remove('show'), 2200);
+  }
+  document.addEventListener('keydown', e => {
+    const tag = document.activeElement.tagName.toLowerCase();
+    if (['input','textarea','select'].includes(tag)) return;
+    if (e.key === 'ArrowRight') {
+      showHint('<kbd>→</kbd> Переход: Главная');
+      setTimeout(() => location.href='index.html', 400);
+    } else if (e.key === 'ArrowLeft') {
+      showHint('<kbd>←</kbd> Переход: Животные');
+      setTimeout(() => location.href='animals.html', 400);
+    } else if (e.key === 'Escape') {
+      form.reset(); charLeft.textContent='800';
+      ['err-fname','err-email','err-message'].forEach(id => showErr(id, false));
+      showHint('<kbd>Esc</kbd> Форма очищена');
+    } else if (e.key === 'f' || e.key === 'F') {
+      document.getElementById('fname').focus();
+      showHint('<kbd>F</kbd> Перейти к форме');
+    }
+  });
+
+  document.querySelectorAll('.info-item').forEach(item => {
+    item.addEventListener('mouseenter', () => dot.style.transform = 'translate(-50%,-50%) scale(2)');
+    item.addEventListener('mouseleave', () => dot.style.transform = 'translate(-50%,-50%) scale(1)');
+  });
+
+  const style = document.createElement('style');
+  style.textContent = `@keyframes shake {
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+  }`;
+  document.head.appendChild(style);
+</script>
+</body>
+</html>
